@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="selahattin" runOnChange="true">
+        <createTable tableName="user_metadata">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="selahattin" runOnChange="true">
+        <createTable tableName="categories">
+            <column name="category_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="category_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="categories">
+            <column name="category_name">Otomobil</column>
+        </insert>
+        <insert tableName="categories">
+            <column name="category_name">Motosiklet</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="3" author="selahattin" runOnChange="true">
+        <createTable tableName="listings">
+            <column name="listing_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="brand" type="VARCHAR(100)"/>
+            <column name="model" type="VARCHAR(100)"/>
+            <column name="year" type="INTEGER"/>
+            <column name="mileage" type="INTEGER"/>
+            <column name="location" type="VARCHAR(255)"/>
+            <column name="photos" type="JSONB"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="listings"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user"
+                                 referencedTableName="user_metadata"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="listings"
+                                 baseColumnNames="category_id"
+                                 constraintName="fk_category"
+                                 referencedTableName="categories"
+                                 referencedColumnNames="category_id"/>
+    </changeSet>
+
+    <changeSet id="4" author="selahattin" runOnChange="true">
+        <createTable tableName="messages">
+            <column name="message_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sender_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="receiver_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="listing_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sent_at" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="messages"
+                                 baseColumnNames="sender_id"
+                                 constraintName="fk_sender"
+                                 referencedTableName="user_metadata"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="messages"
+                                 baseColumnNames="receiver_id"
+                                 constraintName="fk_receiver"
+                                 referencedTableName="user_metadata"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="messages"
+                                 baseColumnNames="listing_id"
+                                 constraintName="fk_listing"
+                                 referencedTableName="listings"
+                                 referencedColumnNames="listing_id"/>
+    </changeSet>
+
+    <changeSet id="5.1" author="selahattin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_listings_user_id" tableName="listings"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_listings_user_id" tableName="listings">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex indexName="idx_listings_price" tableName="listings">
+            <column name="price"/>
+        </createIndex>
+        <createIndex indexName="idx_listings_year" tableName="listings">
+            <column name="year"/>
+        </createIndex>
+        <createIndex indexName="idx_listings_brand_model" tableName="listings">
+            <column name="brand"/>
+            <column name="model"/>
+        </createIndex>
+        <createIndex indexName="idx_listings_location_price" tableName="listings">
+            <column name="location"/>
+            <column name="price"/>
+        </createIndex>
+        <createIndex indexName="idx_listings_created_at" tableName="listings">
+            <column name="created_at"/>
+        </createIndex>
+        <sql>
+            CREATE INDEX idx_listings_title_description ON listings
+                USING GIN (to_tsvector('turkish', title || ' ' || coalesce(description, '')));
+        </sql>
+    </changeSet>
+
+    <changeSet id="6" author="selahattin" runOnChange="true">
+        <createIndex indexName="idx_messages_sender_id" tableName="messages">
+            <column name="sender_id"/>
+        </createIndex>
+        <createIndex indexName="idx_messages_receiver_id" tableName="messages">
+            <column name="receiver_id"/>
+        </createIndex>
+        <createIndex indexName="idx_messages_listing_id" tableName="messages">
+            <column name="listing_id"/>
+        </createIndex>
+        <createIndex indexName="idx_messages_thread" tableName="messages">
+            <column name="listing_id"/>
+            <column name="sender_id"/>
+            <column name="receiver_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="7" author="selahattin" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="messages" columnName="is_read"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="messages">
+            <column name="is_read" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="8" author="selahattin" runOnChange="true">
+        <createTable tableName="blocked_users">
+            <column name="block_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="blocker_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="blocked_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="blocked_users"
+                             columnNames="blocker_id,blocked_id"
+                             constraintName="uk_blocker_blocked"/>
+        <addForeignKeyConstraint baseTableName="blocked_users"
+                                 baseColumnNames="blocker_id"
+                                 constraintName="fk_blocker"
+                                 referencedTableName="user_metadata"
+                                 referencedColumnNames="user_id"/>
+        <addForeignKeyConstraint baseTableName="blocked_users"
+                                 baseColumnNames="blocked_id"
+                                 constraintName="fk_blocked"
+                                 referencedTableName="user_metadata"
+                                 referencedColumnNames="user_id"/>
+        <createIndex indexName="idx_blocked_users_blocker_id" tableName="blocked_users">
+            <column name="blocker_id"/>
+        </createIndex>
+        <createIndex indexName="idx_blocked_users_blocked_id" tableName="blocked_users">
+            <column name="blocked_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="9" author="selahattin" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <uniqueConstraintExists tableName="categories" constraintName="uk_category_name"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint tableName="categories"
+                             columnNames="category_name"
+                             constraintName="uk_category_name"/>
+        <createIndex indexName="idx_categories_category_name" tableName="categories">
+            <column name="category_name"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="10" author="selahattin" runOnChange="true">
+        <createTable tableName="user_roles">
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="user_roles"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user_roles_user_id"
+                                 referencedTableName="user_metadata"
+                                 referencedColumnNames="user_id"/>
+        <addUniqueConstraint tableName="user_roles"
+                             columnNames="user_id,role"
+                             constraintName="uk_user_roles_user_id_role"/>
+        <sql>
+            INSERT INTO user_roles (user_id, role)
+            SELECT user_id, 'ROLE_ADMIN' FROM user_metadata WHERE email = 'admin@example.com';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
