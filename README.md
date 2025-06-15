@@ -48,9 +48,8 @@
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/listigo-demo.git
-   cd listigo-demo/listigo-demo 
-   # (Assuming 'listigo-demo' is the Spring Boot project directory)
+   git clone https://github.com/SelahattinSert/listigo-demo.git
+   cd listigo-demo/listigo-demo
    ```
 
 2. **Configure Database**  
@@ -88,8 +87,7 @@
 
 1. **Navigate to Frontend Directory**
    ```bash
-   cd ../listigo-frontend 
-   # (Or the actual directory name of your React frontend project)
+   cd ../listigo-frontend
    ```
 
 2. **Install Dependencies**
