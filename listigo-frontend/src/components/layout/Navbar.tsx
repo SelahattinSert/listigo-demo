@@ -4,11 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ROUTES, ROLES } from '../../constants';
 import Button from '../ui/Button';
-import { useTheme } from '../../contexts/ThemeContext'; // Import useTheme
+import { useTheme } from '../../contexts/ThemeContext';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, user, roles, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme(); // Use theme context
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

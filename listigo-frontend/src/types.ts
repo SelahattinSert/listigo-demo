@@ -2,18 +2,18 @@
 // From backend DTOs
 
 export interface UserMetadata {
-  userId: string; // UUID
+  userId: string;
   email: string;
   name: string;
   phone: string;
-  createdAt: string; // ISO DateTime string
+  createdAt: string;
   refreshToken?: string;
-  refreshTokenExpiration?: string; // ISO DateTime string
+  refreshTokenExpiration?: string;
   // listings: Listing[]; // Avoid circular dependency if Listing type also includes UserMetadata
 }
 
 export interface UserResponse {
-  userId: string; // UUID
+  userId: string;
   email: string;
   name: string;
   phone: string;
@@ -43,13 +43,13 @@ export interface RefreshTokenRequest {
 }
 
 export interface CategoryDTO {
-  categoryId: number | null; // Null for new category before saving
+  categoryId: number | null;
   categoryName: string;
 }
 
 export interface ListingDTO {
   listingId?: number; // Optional for new listings
-  userId: string; // UUID string
+  userId: string;
   categoryId: number;
   title: string;
   description?: string;
@@ -60,7 +60,7 @@ export interface ListingDTO {
   mileage?: number;
   location?: string;
   photos: string[];
-  createdAt?: string; // ISO DateTime string
+  createdAt?: string;
 }
 
 export interface ListingFilterDTO {
@@ -77,16 +77,16 @@ export interface ListingFilterDTO {
 
 export interface MessageDTO {
   messageId?: number;
-  senderId: string; // UUID string
-  receiverId: string; // UUID string
+  senderId: string;
+  receiverId: string;
   listingId: number;
   content: string;
-  sentAt?: string; // ISO DateTime string
+  sentAt?: string;
   isRead?: boolean;
 }
 
 export interface BlockUserDTO {
-  blockedId: string; // UUID string of the user to be blocked
+  blockedId: string;
 }
 
 export interface ErrorResponse {
@@ -111,17 +111,15 @@ export interface FavoriteListing {
   id: number;
   title: string;
   price: number;
-  imageUrl?: string; // first photo
+  imageUrl?: string;
 }
 
-// For password change form
 export interface ChangePasswordForm {
   oldPassword?: string;
   newPassword?: string;
   confirmNewPassword?: string;
 }
 
-// API Service Function Generic Type
 export type ApiService = <T, D = unknown>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   endpoint: string,
@@ -129,14 +127,13 @@ export type ApiService = <T, D = unknown>(
   params?: Record<string, string | number | boolean | undefined>
 ) => Promise<T>;
 
-// For simplified conversation overview
 export interface ConversationInfo {
   listingId: number;
   listingTitle: string;
   otherParticipantName: string;
   otherParticipantId: string;
   lastMessage?: string;
-  lastMessageAt?: string; // ISO DateTime string
+  lastMessageAt?: string;
   unreadCount?: number;
   listingImageUrl?: string;
 }

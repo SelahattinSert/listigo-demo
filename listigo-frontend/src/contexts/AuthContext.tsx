@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import Spinner from '../components/ui/Spinner';
 
 interface DecodedToken {
-  sub: string; // User ID (UUID)
+  sub: string;
   roles: string[];
   iat: number;
   exp: number;
@@ -19,7 +19,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [roles, setRoles] = useState<string[] | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true); // Initialize loading to true
+  const [loading, setLoading] = useState<boolean>(true);
 
   const clearAuthData = useCallback(() => {
     setUser(null);
@@ -46,19 +46,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(userData);
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER_INFO, JSON.stringify(userData));
       } else {
-        // If no userData is explicitly passed (e.g., on initial load from localStorage),
-        // try to load user info from localStorage if it was stored separately.
         const storedUserString = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_INFO);
         if (storedUserString) {
           try {
             const storedUser = JSON.parse(storedUserString) as UserMetadata;
-            // Ensure the stored user matches the token's subject (userId)
             if (storedUser.userId === decodedToken.sub) {
               setUser(storedUser);
             } else {
-              // Mismatch, clear stored user info as it's stale/incorrect
               localStorage.removeItem(LOCAL_STORAGE_KEYS.USER_INFO);
-              setUser(null); // Or attempt to fetch based on decodedToken.sub
+              setUser(null);
             }
           } catch (parseError) {
             console.error("Failed to parse stored user info:", parseError);
@@ -66,8 +62,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(null);
           }
         }
-        // If user data is still null, and token has sub, an API call could be made here
-        // For now, it relies on login providing full user details.
       }
     } catch (error) {
       console.error("Failed to decode token or set auth data:", error);
@@ -77,8 +71,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = useCallback(() => {
     clearAuthData();
-    // TODO: Call backend logout endpoint if available
-    // Navigation to home/login page will be handled by ProtectedRoute or component logic
   }, [clearAuthData]);
 
   useEffect(() => {
@@ -89,14 +81,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const decoded = jwtDecode<DecodedToken>(storedToken);
         if (decoded.exp * 1000 > Date.now()) {
-          // UserData is not passed here initially, decodeAndSetTokenData will try to load from localStorage
           decodeAndSetTokenData(storedToken);
         } else {
-          logout(); // Token expired
+          logout();
         }
       } catch (e) {
         console.error("Error initializing auth state from localStorage:", e);
-        logout(); // Clear invalid state
+        logout();
       }
     }
     setLoading(false);
@@ -104,7 +95,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 
   const login = async (data: AuthResponse): Promise<void> => {
-    // User data is directly available from login response
     decodeAndSetTokenData(data.accessToken, data.user);
   };
 

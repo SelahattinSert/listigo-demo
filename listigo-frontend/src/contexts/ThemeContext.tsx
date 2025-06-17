@@ -16,10 +16,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (storedTheme) {
         return storedTheme;
       }
-      // Prefer system theme if no explicit choice
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    return 'light'; // Default for SSR or non-browser environments
+    return 'light';
   });
 
   useEffect(() => {

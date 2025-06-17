@@ -2,7 +2,6 @@
 import { PASSWORD_VALIDATION, PHONE_VALIDATION_REGEX } from '../constants';
 
 export const isValidEmail = (email: string): boolean => {
-  // Basic email regex, consider a more robust one if needed
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };

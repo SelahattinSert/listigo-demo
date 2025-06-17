@@ -8,9 +8,6 @@ import { PASSWORD_VALIDATION } from '../../constants';
 interface ChangePasswordFormProps {
   onSubmit: (data: ChangePasswordFormType) => Promise<void>;
   isSubmitting: boolean;
-  // Optional key prop to force re-mount and reset. 
-  // If not provided, the form won't auto-reset its internal state on its own
-  // but ProfilePage can trigger a reset by changing this key.
   key?: number; 
 }
 
@@ -27,7 +24,6 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ onSubmit, isSub
     confirmNewPassword: true,
   });
 
-  // Effect to reset form when the key prop changes (if provided)
   useEffect(() => {
     setFormData({ oldPassword: '', newPassword: '', confirmNewPassword: '' });
     setErrors({});
@@ -45,7 +41,6 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ onSubmit, isSub
     if (errors[name as keyof ChangePasswordFormType]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
-    // Dynamic validation for newPassword as user types
     if (name === 'newPassword') {
       const validationResult = validatePassword(value);
       if (!validationResult.isValid) {
@@ -65,7 +60,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ onSubmit, isSub
     const newPasswordValidation = validatePassword(formData.newPassword || '');
     if (!newPasswordValidation.isValid) {
       newErrors.newPassword = newPasswordValidation.message;
-    } else if (formData.newPassword === formData.oldPassword && formData.oldPassword) { // Don't flag if oldPassword is empty during initial typing
+    } else if (formData.newPassword === formData.oldPassword && formData.oldPassword) {
       newErrors.newPassword = "Yeni şifre eski şifre ile aynı olamaz.";
     }
 
@@ -83,8 +78,6 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({ onSubmit, isSub
     e.preventDefault();
     if (!validateForm()) return;
     await onSubmit(formData);
-    // Form reset is now handled by ProfilePage by changing the `key` prop
-    // if a successful submission occurs there.
   };
 
   return (

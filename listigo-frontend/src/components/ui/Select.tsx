@@ -11,7 +11,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: SelectOption[];
   error?: string | null;
   containerClassName?: string;
-  placeholder?: string; // Explicitly define placeholder prop
+  placeholder?: string;
 }
 
 const Select: React.FC<SelectProps> = ({ 
@@ -20,7 +20,7 @@ const Select: React.FC<SelectProps> = ({
   error, 
   containerClassName = '', 
   className = '', 
-  placeholder, // Destructure placeholder
+  placeholder,
   ...props 
 }) => {
   const baseSelectClasses = "mt-1 block w-full pl-3 pr-10 py-2 text-base bg-white dark:bg-gray-700 dark:text-gray-100 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md";

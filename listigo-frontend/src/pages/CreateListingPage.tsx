@@ -30,13 +30,6 @@ const CreateListingPage: React.FC = () => {
 
     try {
       const createdListing = await apiService<ListingDTO, ListingDTO>('POST', '/listings', dataToSend);
-      // Backend might return the full DTO including ID and createdAt.
-      // Assuming a simple creation doesn't require photo uploads in the same step as per ListingController
-      // Photo upload is a separate endpoint POST /listings/{listingId}/photos
-      // For simplicity, if photos are URLs, they are already in listingData.photos.
-      // If actual file upload was intended, this flow would be different (upload files, get URLs, then save listing).
-      
-      // Since backend ListingService::createListing handles photos if they are URLs:
       navigate(`${ROUTES.LISTING_DETAILS}/${createdListing.listingId}`, {state: { message: "İlan başarıyla oluşturuldu!" }});
 
     } catch (err) {
@@ -47,18 +40,16 @@ const CreateListingPage: React.FC = () => {
   };
 
   if (!user) {
-      // This should be caught by ProtectedRoute, but as a fallback:
       navigate(ROUTES.LOGIN);
       return null;
   }
   
   const initialData: ListingDTO = {
       userId: user.userId,
-      categoryId: 0, // Will be updated when categories load in form
+      categoryId: 0,
       title: '',
       price: 0,
       photos: [],
-      // other fields can be undefined or have defaults
   };
 
   return (

@@ -10,7 +10,6 @@ interface AlertProps {
 
 const Alert: React.FC<AlertProps> = ({ type, message, onClose, className = '' }) => {
   const baseStyles = 'p-4 rounded-md flex items-start';
-  // Adjusted dark mode colors for better contrast
   const typeStyles = {
     success: 'bg-green-100 border border-green-400 text-green-700 dark:bg-green-800 dark:border-green-600 dark:text-green-100',
     error: 'bg-red-100 border border-red-400 text-red-700 dark:bg-red-800 dark:border-red-600 dark:text-red-100',

@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ListingDTO } from '../../types';
 import { ROUTES, DEFAULT_PLACEHOLDER_IMAGE } from '../../constants';
 import { useFavorites } from '../../hooks/useFavorites'; 
 import Button from '../ui/Button';
+import { useAuth } from '../../hooks/useAuth';
 
 interface ListingCardProps {
   listing: ListingDTO;
@@ -12,12 +12,15 @@ interface ListingCardProps {
 
 const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+  const { isAuthenticated } = useAuth();
   const imageUrl = listing.photos && listing.photos.length > 0 ? listing.photos[0] : DEFAULT_PLACEHOLDER_IMAGE;
 
   const handleFavoriteToggle = (e: React.MouseEvent) => {
     e.preventDefault(); 
     e.stopPropagation();
-    if (!listing.listingId) return;
+    if (!isAuthenticated || !listing.listingId) {
+        return;
+    }
     if (isFavorite(listing.listingId)) {
       removeFavorite(listing.listingId);
     } else {
@@ -40,10 +43,16 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
           <Button 
             onClick={handleFavoriteToggle}
             variant='ghost'
-            className="absolute top-2 right-2 bg-white bg-opacity-70 hover:bg-opacity-90 dark:bg-gray-800 dark:bg-opacity-70 dark:hover:bg-opacity-90 p-2 rounded-full z-10"
-            aria-label={isFavorite(listing.listingId) ? "Favorilerden kaldır" : "Favorilere ekle"}
+            className={`absolute top-2 right-2 bg-white bg-opacity-70 hover:bg-opacity-90 dark:bg-gray-800 dark:bg-opacity-70 dark:hover:bg-opacity-90 p-2 rounded-full z-10 ${!isAuthenticated ? 'cursor-not-allowed' : ''}`}
+            aria-label={isAuthenticated && isFavorite(listing.listingId) ? "Favorilerden kaldır" : "Favorilere ekle"}
+            disabled={!isAuthenticated}
+            title={!isAuthenticated ? "Favorilere eklemek için giriş yapın" : (isAuthenticated && isFavorite(listing.listingId) ? "Favorilerden kaldır" : "Favorilere ekle")}
           >
-            <i className={`fas fa-heart text-xl ${isFavorite(listing.listingId) ? 'text-red-500' : 'text-gray-400 hover:text-red-400 dark:text-gray-500 dark:hover:text-red-400'}`}></i>
+            <i className={`fas fa-heart text-xl ${
+              isAuthenticated && isFavorite(listing.listingId) 
+                ? 'text-red-500' 
+                : 'text-gray-400 hover:text-red-400 dark:text-gray-500 dark:hover:text-red-400'
+            } ${!isAuthenticated ? 'opacity-50' : ''}`}></i>
           </Button>
         </div>
         <div className="p-4">

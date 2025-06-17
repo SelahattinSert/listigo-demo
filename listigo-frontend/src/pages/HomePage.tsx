@@ -40,7 +40,6 @@ const HomePage: React.FC = () => {
       const activeFilters: Partial<ListingFilterDTO> = {};
       Object.entries(currentFilters).forEach(([key, value]) => {
         if (value !== undefined && value !== '' && value !== null) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (activeFilters as any)[key] = value;
         }
       });

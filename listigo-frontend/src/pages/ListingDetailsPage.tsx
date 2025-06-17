@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { ListingDTO, UserMetadata } from '../types';
@@ -43,7 +42,6 @@ const ListingDetailsPage: React.FC = () => {
     try {
       const data = await apiService<ListingDTO>('GET', `/listings/${id}`);
       setListing(data);
-      // Owner details can be fetched if needed, currently simplified
     } catch (err) {
       setError(err instanceof Error ? err.message : 'İlan yüklenirken bir hata oluştu.');
     } finally {
@@ -56,7 +54,9 @@ const ListingDetailsPage: React.FC = () => {
   }, [fetchListingDetails]);
 
   const handleFavoriteToggle = () => {
-    if (!listing || !listing.listingId) return;
+    if (!isAuthenticated || !listing || !listing.listingId) {
+        return;
+    }
     if (isFavorite(listing.listingId)) {
       removeFavorite(listing.listingId);
     } else {

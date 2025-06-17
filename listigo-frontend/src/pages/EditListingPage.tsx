@@ -72,12 +72,11 @@ const EditListingPage: React.FC = () => {
     return <div className="flex justify-center items-center h-screen"><Spinner size="lg" /></div>;
   }
 
-  if (error && !listing) { // Show error prominently if listing couldn't be loaded
+  if (error && !listing) {
     return <div className="max-w-3xl mx-auto py-8 px-4"><Alert type="error" message={error} /></div>;
   }
   
   if (!listing) {
-    // This case should ideally be handled by the error state above or redirect.
     return <div className="max-w-3xl mx-auto py-8 px-4"><Alert type="error" message="İlan bulunamadı." /></div>;
   }
 

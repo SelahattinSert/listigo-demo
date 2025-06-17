@@ -29,12 +29,12 @@ export const PASSWORD_VALIDATION = {
   minLength: 6,
   requireUppercase: true,
   requireLowercase: true,
-  requireNumber: false, // User request: "en az bir büyük, küçük harf ve özel karakter" - number not specified but good practice
+  requireNumber: false,
   requireSpecialChar: true,
   regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/,
   errorMessage: 'Şifre en az 6 karakter olmalı, en az bir büyük harf, bir küçük harf ve bir özel karakter içermelidir.'
 };
 
-export const PHONE_VALIDATION_REGEX = /^[+]?[0-9\s-()]{7,20}$/; // Basic international phone regex
+export const PHONE_VALIDATION_REGEX = /^[+]?[0-9\s-()]{7,20}$/;
 
 export const DEFAULT_PLACEHOLDER_IMAGE = 'https://picsum.photos/400/300';

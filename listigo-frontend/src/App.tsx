@@ -34,7 +34,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
   if (allowedRoles && user && roles) {
     const userHasRequiredRole = allowedRoles.some(role => roles.includes(role));
     if (!userHasRequiredRole) {
-      return <Navigate to="/" replace />; // Or a specific "Access Denied" page
+      return <Navigate to="/" replace />;
     }
   }
   

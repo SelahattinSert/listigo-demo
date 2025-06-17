@@ -5,7 +5,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string | null;
   containerClassName?: string;
-  validate?: (value: string) => boolean | string; // Returns true if valid, or error message string
+  validate?: (value: string) => boolean | string;
   onValidation?: (isValid: boolean) => void;
 }
 

@@ -13,7 +13,7 @@ interface EditProfileFormProps {
 
 const EditProfileForm: React.FC<EditProfileFormProps> = ({ currentUser, onUpdateProfile, isSubmitting }) => {
   const [formData, setFormData] = useState<UserDto>({
-    email: currentUser.email, // Email is typically not editable, but display it.
+    email: currentUser.email,
     name: currentUser.name,
     phone: currentUser.phone,
   });
@@ -49,7 +49,6 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ currentUser, onUpdate
     if (!formData.phone.trim()) newErrors.phone = "Telefon numarası boş olamaz.";
     else if (!isValidPhoneNumber(formData.phone)) newErrors.phone = "Geçerli bir telefon numarası girin.";
     
-    // Check dynamic validations
     if (!formValidations.name) newErrors.name = errors.name || "İsim geçersiz.";
     if (!formValidations.phone) newErrors.phone = errors.phone || "Telefon numarası geçersiz.";
     
@@ -62,10 +61,8 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ currentUser, onUpdate
     e.preventDefault();
     if (!validateForm()) return;
     
-    // Backend UserDto for update doesn't need password.
-    // Email is also not updatable via this DTO in backend service.
     const updateData: UserDto = {
-        email: formData.email, // Include email even if not changed, for consistency with DTO. Backend might ignore it.
+        email: formData.email,
         name: formData.name,
         phone: formData.phone,
     };
@@ -79,7 +76,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ currentUser, onUpdate
         name="email"
         type="email"
         value={formData.email}
-        disabled // Email generally not editable
+        disabled
         containerClassName="opacity-70"
       />
       <Input

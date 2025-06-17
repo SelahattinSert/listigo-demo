@@ -34,8 +34,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ listing, otherParticipant
     const fetchMessages = async () => {
       if (!user || !listing.listingId) return;
       setIsLoading(true);
-      // Keep existing error if it's critical and not a "not found" or "not authorized" for initial load by non-owner
-      // setError(null); // Reset error only if it's a "safe to ignore for now" error
       try {
         const fetchedMessages = await apiService<MessageDTO[]>(
           'GET',
@@ -43,16 +41,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ listing, otherParticipant
         );
         fetchedMessages.sort((a, b) => new Date(a.sentAt || 0).getTime() - new Date(b.sentAt || 0).getTime());
         setMessages(fetchedMessages);
-        setError(null); // Clear error on successful fetch
+        setError(null);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message.toLowerCase() : '';
-        // If the current user is NOT the listing owner, and the error is "not authorized" or "not found"
-        // it means they are likely opening the chat for the first time. Don't show this as a critical error.
         if (user.userId !== listing.userId && (errorMessage.includes("not authorized") || errorMessage.includes("not found") || errorMessage.includes("404") || errorMessage.includes("no messages found"))) {
-          setMessages([]); // Ensure messages are empty
-          setError(null); // Do not show error to the user
+          setMessages([]);
+          setError(null);
         } else {
-          // For other errors, or if the user IS the owner (and messages are expected), show the error.
           setError(err instanceof Error ? err.message : 'Mesajlar yüklenirken bir hata oluştu.');
         }
         console.error("Error fetching messages in ChatInterface:", err);
